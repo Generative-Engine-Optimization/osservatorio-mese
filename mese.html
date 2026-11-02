@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Il mese dell'AI · prototipo</title>
+  <meta name="description" content="Prototipo della pagina mensile dell'osservatorio: cosa è cambiato nelle risposte dell'AI. Dati di esempio.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="month-page">
+  <div class="proto-bar"><strong>Prototipo</strong> · tutti i numeri, i movimenti e le notizie sono dati di esempio, non misure dell'osservatorio</div>
+  <div class="proto-badge" aria-hidden="true">Dati di esempio</div>
+
+  <header class="site-head space">
+    <div class="wrap">
+      <a class="brand" href="index.html"><span data-logo></span><span class="brand-tag">Osservatorio AI<br>turismo italiano</span></a>
+      <nav class="nav" aria-label="Principale">
+        <a href="index.html">Oggi</a>
+        <a href="mese.html" aria-current="page" data-month-link>Il mese</a>
+        <a href="index.html#classifiche">Classifiche</a>
+        <a href="index.html#archivio">Archivio</a>
+        <a href="index.html#metodo">Metodo</a>
+      </nav>
+      <a class="btn btn-primary btn-small head-cta" href="https://osservatorio.rankwit.ai/it/">Report completo</a>
+      <a class="btn btn-ghost btn-small menu-link" href="index.html">Oggi</a>
+    </div>
+  </header>
+
+  <section class="ticker" id="ticker" aria-label="Chi sale e chi scende nel mese"></section>
+
+  <header class="masthead">
+    <div class="wrap">
+      <nav class="issue-switch" id="issue-switch" aria-label="Numeri del mese"></nav>
+      <p class="kicker" id="mast-kicker"></p>
+      <h1 class="mast-title" id="mast-title"></h1>
+      <p class="mast-dek" id="mast-dek"></p>
+    </div>
+  </header>
+
+  <section class="wrap brief-grid">
+    <div>
+      <h2 class="brief-h">In breve</h2>
+      <ol class="brief" id="brief"></ol>
+    </div>
+    <aside class="card board light" id="month-board" aria-label="Il mese in numeri"></aside>
+  </section>
+
+  <section class="stories" id="stories" aria-label="Le cinque notizie"></section>
+
+  <section class="section" id="tutti">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">Tutti i movimenti</span>
+          <h2 id="all-title">Località per località</h2>
+          <p id="all-sub"></p>
+        </div>
+      </div>
+      <div class="filters">
+        <div class="tabs" id="cat-filter" role="group" aria-label="Categoria"></div>
+        <label class="toggle"><input type="checkbox" id="show-stable"> Mostra anche le stabili</label>
+      </div>
+      <div class="card all-table" id="all-table"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap notes">
+      <div class="card note">
+        <h3>Cosa diciamo e cosa no</h3>
+        <p>Diciamo cosa è cambiato nelle risposte, non perché. Le cause possono essere tante: una pagina nuova, un articolo, un aggiornamento dell'assistente. Per questo non le attribuiamo.</p>
+        <p>Le cinque notizie le scelgono i dati, con le stesse regole ogni mese: la salita e la discesa più grandi oltre l'oscillazione, la località che entra con la presenza più alta, il primo cambio al vertice, il primo cambio di fonte.</p>
+      </div>
+      <div class="card note note-context">
+        <h3>Il contesto del mese</h3>
+        <p>Nel numero vero qui va la nota sui cambi di modello dichiarati dai motori nel mese. Un cambio di modello sposta tutte le località insieme, ed è una notizia a sé.</p>
+        <p class="mono" style="font-size:12px;color:var(--ink-muted)">Segnaposto del prototipo</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <nav class="issue-nav" id="issue-nav" aria-label="Numero precedente e successivo"></nav>
+      <div class="subscribe space">
+        <div>
+          <h2>Il prossimo numero, nella tua casella</h2>
+          <p>Il primo giorno di ogni mese: cinque notizie, le classifiche e cosa guardare il mese dopo. Gratis.</p>
+        </div>
+        <form data-stub novalidate>
+          <label class="sr-only" for="email">Email</label>
+          <div class="field">
+            <input id="email" type="email" placeholder="La tua email di lavoro" autocomplete="email">
+            <button class="btn btn-primary" type="submit">Iscriviti</button>
+          </div>
+          <p class="form-note" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-foot space">
+    <div class="wrap">
+      <div>
+        <span data-logo></span>
+        <p class="foot-note">Prototipo della pagina mensile per osservatorio.rankwit.ai, 26 ottobre 2026. Numeri, movimenti e notizie sono dati di esempio generati per il prototipo: non sono misure dell'osservatorio.</p>
+      </div>
+      <div id="crediti">
+        <h3>Crediti delle foto</h3>
+        <ul class="credits" id="credits"></ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/mese.js"></script>
+</body>
+</html>
