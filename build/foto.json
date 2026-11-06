@@ -70,5 +70,18 @@
   "author": "Toni Pecoraro",
   "license": "Pubblico dominio",
   "url": "https://commons.wikimedia.org/wiki/File:Gradara_II.jpg"
+ },
+ "Val Ferret": {
+  "file": "val-ferret.jpg",
+  "author": "Giorgio Galeotti",
+  "license": "CC BY 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Val_Ferret_-_Courmayeur,_Aosta,_Italy_-_August_8,_2016.jpg",
+  "pos": "62% 70%"
+ },
+ "Follonica": {
+  "file": "follonica.jpg",
+  "author": "Andrea Anselmi",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Vista_di_Follonica.jpg"
  }
 }

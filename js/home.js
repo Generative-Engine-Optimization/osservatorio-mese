@@ -37,7 +37,7 @@
     }
     return `
       <article class="feature${lead ? " feature-lead" : ""}${ph ? "" : " feature-type"}">
-        ${ph ? `<img src="img/${esc(ph.file)}" alt="" loading="${lead ? "eager" : "lazy"}">` : `<span class="feature-word" aria-hidden="true">${esc(title)}</span>`}
+        ${ph ? `<img src="img/${esc(ph.file)}" alt=""${ph.pos ? ` style="object-position:${esc(ph.pos)}"` : ""} loading="${lead ? "eager" : "lazy"}">` : `<span class="feature-word" aria-hidden="true">${esc(title)}</span>`}
         <span class="chip chip-top chip-${kind}"><i></i>${esc(story.kicker)}</span>
         ${ph ? O.creditHTML(name) : ""}
         <div class="feature-body">

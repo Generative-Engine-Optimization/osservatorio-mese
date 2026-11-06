@@ -82,7 +82,7 @@
     const label = s.place?.name ?? s.now.region ?? s.now.name;
     if (!ph) return `<div class="story-media story-media-empty"><span>${esc(label)}</span></div>`;
     const caption = name !== label ? `<span>${esc(name)}</span> · ` : "";
-    return `<figure class="story-media"><img src="img/${esc(ph.file)}" alt="${esc(name)}" loading="lazy"><figcaption>${caption}${O.creditHTML(name)}</figcaption></figure>`;
+    return `<figure class="story-media"><img src="img/${esc(ph.file)}" alt="${esc(name)}"${ph.pos ? ` style="object-position:${esc(ph.pos)}"` : ""} loading="lazy"><figcaption>${caption}${O.creditHTML(name)}</figcaption></figure>`;
   }
 
   function chartHTML(s) {
