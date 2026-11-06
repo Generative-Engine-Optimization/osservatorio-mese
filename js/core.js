@@ -17,6 +17,11 @@
   const thousands = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   const fmt = (n, d = 1) => n.toLocaleString("it-IT", { maximumFractionDigits: d });
   const pct = (n) => (n == null ? "–" : n > 0 && n < 1 ? "<1%" : `${fmt(n, 0)}%`);
+  // «nel 49%» but «nell'80%», «all'11%», «l'8%»: the article follows how the number is read.
+  const vowelNum = (v) => { const n = Math.round(v); return v < 1 || n === 1 || n === 11 || String(n)[0] === "8"; };
+  const pNel = (v) => (vowelNum(v) ? "nell'" : "nel ") + pct(v);
+  const pAl = (v) => (vowelNum(v) ? "all'" : "al ") + pct(v);
+  const pIl = (v) => (vowelNum(v) ? "l'" : "il ") + pct(v);
   const signed = (n) => (n > 0 ? "+" : n < 0 ? MINUS : "±") + fmt(Math.abs(n));
   const points = (n) => `${fmt(Math.abs(n))} ${Math.abs(n) === 1 ? "punto" : "punti"}`;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -98,17 +103,50 @@
     return { hi, lo, gap: hi.v - lo.v };
   }
 
+  // A probable reason for a movement, read in the same month's numbers: who moves the other way in the same ranking,
+  // whether the whole ranking moves, how much the engines disagree, how many questions are behind it. A hypothesis,
+  // never a verified cause: the page says so next to it.
+  function whyLines(r) {
+    const up = r.status === "up";
+    const list = groups.get(r.group) ?? [];
+    const comp = list.filter((x) => ["up", "down", "stable"].includes(x.status));
+    const same = comp.filter((x) => x.status === r.status).length;
+    const other = comp.filter((x) => x.status === (up ? "down" : "up")).length;
+    const lines = [];
+    if (same >= 4 && same >= 3 * Math.max(other, 1) - 1) {
+      lines.push(up
+        ? `Non sale da sola: in questa classifica salgono ${same} località su ${comp.length}. Probabilmente a ${NOW.month} le risposte nominano più luoghi di prima, e ${r.name} è fra quelle che ne approfittano di più.`
+        : `Non scende da sola: in questa classifica scendono ${same} località su ${comp.length}. Probabilmente a ${NOW.month} le risposte si concentrano su meno luoghi.`);
+    } else {
+      const opp = list.filter((x) => x !== r && x.status === (up ? "down" : "up") && Math.abs(x.delta) >= 3).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)).slice(0, 2);
+      if (opp.length) {
+        const names = opp.map((x) => `${x.name} (${signed(x.delta)})`).join(" e ");
+        lines.push(up
+          ? `Nella stessa classifica ${opp.length === 1 ? "scende" : "scendono"} ${names}: è probabile che le risposte abbiano dato a ${r.name} parte dello spazio tolto ${opp.length === 1 ? "a lei" : "a loro"}.`
+          : `Nella stessa classifica ${opp.length === 1 ? "sale" : "salgono"} ${names}: è probabile che le risposte abbiano spostato spazio da ${r.name} verso ${opp.length === 1 ? "di lei" : "di loro"}.`);
+      }
+    }
+    if (!up && r.rank === 1) lines.push("Resta comunque prima: perde terreno, ma nessuna la supera.");
+    const sp = engineSpread(r);
+    if (sp && sp.gap >= 40) {
+      lines.push(`Gli assistenti la vedono in modo molto diverso: ${sp.hi.name} la propone ${pNel(sp.hi.v)} delle risposte, ${sp.lo.name} ${pNel(sp.lo.v)}. Quando uno di loro cambia idea, la media si muove di molto.`);
+    } else if (r.nq <= 5) {
+      lines.push(`Dietro questa classifica ci sono ${WORDS[r.nq] ?? r.nq} domande: poche risposte in più o in meno bastano a spostare molti punti.`);
+    }
+    return lines;
+  }
+
   function storyTexts(type, s) {
     const month = NOW.month, prevMonth = PREV.month;
     if (type === "salita" || type === "discesa") {
       const p = s.place;
       const up = type === "salita";
-      const lines = [`${At(month)} ${p.name} compare nel ${pct(p.now)} delle risposte alle domande ${about(p.cat, p.region)}: ${points(p.delta)} ${up ? "in più" : "in meno"} rispetto ${at(prevMonth)}.`];
+      const lines = [`${At(month)} ${p.name} compare ${pNel(p.now)} delle risposte alle domande ${about(p.cat, p.region)}: ${points(p.delta)} ${up ? "in più" : "in meno"} rispetto ${at(prevMonth)}.`];
       if (p.prevRank && p.prevRank !== p.rank) lines.push(`Passa dal ${ordinal(p.prevRank)} al ${ordinal(p.rank)} posto ${AMONG[p.cat](p.region)}.`);
       else lines.push(`Resta al ${ordinal(p.rank)} posto ${AMONG[p.cat](p.region)}.`);
       lines.push(`La variazione supera l'oscillazione che misuriamo fra le risposte dello stesso mese: per questo la contiamo come un movimento. Dietro questa classifica ci sono ${WORDS[p.nq] ?? p.nq} domande, poste più volte a cinque assistenti AI.`);
       const sp = engineSpread(p);
-      if (sp && sp.gap >= 25) lines.push(`Gli assistenti non la vedono allo stesso modo: ${sp.hi.name} la propone nel ${pct(sp.hi.v)} delle risposte, ${sp.lo.name} nel ${pct(sp.lo.v)}.`);
+      if (sp && sp.gap >= 25) lines.push(`Gli assistenti non la vedono allo stesso modo: ${sp.hi.name} la propone ${pNel(sp.hi.v)} delle risposte, ${sp.lo.name} ${pNel(sp.lo.v)}.`);
       return { title: `${p.name} ${up ? "sale" : "scende"} di ${points(p.delta)}`, lines };
     }
     if (type === "sorpresa") {
@@ -116,7 +154,7 @@
       return {
         title: `${p.name} entra in classifica`,
         lines: [
-          `${At(prevMonth)} ${p.name} non era in classifica ${AMONG[p.cat](p.region)}. ${At(month)} compare nel ${pct(p.now)} delle risposte alle domande ${about(p.cat, p.region)} ed entra al ${ordinal(p.rank)} posto.`,
+          `${At(prevMonth)} ${p.name} non era in classifica ${AMONG[p.cat](p.region)}. ${At(month)} compare ${pNel(p.now)} delle risposte alle domande ${about(p.cat, p.region)} ed entra al ${ordinal(p.rank)} posto.`,
           `È la località nuova con la presenza più alta fra le classifiche con almeno ${WORDS[MIN_Q]} domande. Qui le domande sono ${WORDS[p.nq] ?? p.nq}.`,
         ],
       };
@@ -124,11 +162,11 @@
     if (type === "primo" && s.kind === "regione") {
       const { now, before, beforeNow, second } = s;
       const lines = [
-        `Cambia la prima regione nelle risposte alle domande ${aboutItaly(s.cat)}. ${At(month)} l'AI nomina almeno una località ${ofRegion(now.region)} nel ${pct(now.now)} delle risposte: ${points(now.delta)} in più rispetto ${at(prevMonth)}.`,
-        `${At(prevMonth)} la prima era ${withArt(before[0])}, con il ${pct(before[1])}${s.tie ? `, a pari presenza con ${withArt(s.tie[0])}` : ""}.${beforeNow ? ` Ora è al ${ordinal(beforeNow.rank)} posto, con il ${pct(beforeNow.now)}.` : ""}${second && second !== beforeNow ? ` Al secondo posto c'è ${withArt(second.region)}, con il ${pct(second.now)}.` : ""}`,
+        `Cambia la prima regione nelle risposte alle domande ${aboutItaly(s.cat)}. ${At(month)} l'AI nomina almeno una località ${ofRegion(now.region)} ${pNel(now.now)} delle risposte: ${points(now.delta)} in più rispetto ${at(prevMonth)}.`,
+        `${At(prevMonth)} la prima era ${withArt(before[0])}, con ${pIl(before[1])}${s.tie ? `, a pari presenza con ${withArt(s.tie[0])}` : ""}.${beforeNow ? ` Ora è al ${ordinal(beforeNow.rank)} posto, con ${pIl(beforeNow.now)}.` : ""}${second && second !== beforeNow ? ` Al secondo posto c'è ${withArt(second.region)}, con ${pIl(second.now)}.` : ""}`,
         `La salita ${ofRegion(now.region).replace(/^de/, "de")} supera l'oscillazione dello stesso mese: non è un pari merito, è un sorpasso.`,
       ];
-      if (now.source) lines.push(`Alle domande ${about(s.cat, now.region)}, la fonte che l'AI cita di più è ${now.source.name}: compare nel ${pct(now.source.share)} delle risposte.`);
+      if (now.source) lines.push(`Alle domande ${about(s.cat, now.region)}, la fonte che l'AI cita di più è ${now.source.name}: compare ${pNel(now.source.share)} delle risposte.`);
       return { title: `${cats[s.cat].label}: ${withArt(now.region)} passa al primo posto`, lines };
     }
     if (type === "primo") {
@@ -136,7 +174,7 @@
       return {
         title: `${context(s.cat, now.region)}: ${now.name} passa davanti a ${before.name}`,
         lines: [
-          `Cambia il primo nome ${AMONG[s.cat](now.region)}. ${At(month)} ${now.name} compare nel ${pct(now.now)} delle risposte, ${before.name} nel ${pct(before.now)}.`,
+          `Cambia il primo nome ${AMONG[s.cat](now.region)}. ${At(month)} ${now.name} compare ${pNel(now.now)} delle risposte, ${before.name} ${pNel(before.now)}.`,
           `${now.name} sale di ${points(now.delta)}, oltre l'oscillazione dello stesso mese.`,
         ],
       };
@@ -145,7 +183,7 @@
       const { region, next, prior, history, others } = s;
       const kind = (name) => (isDmo(name) ? `${name}, un sito di promozione turistica` : name);
       const lines = [
-        `Alle domande ${about(s.cat, region)}, la fonte che l'AI cita più spesso adesso è ${kind(next.name)}: compare nel ${pct(next.share)} delle risposte.`,
+        `Alle domande ${about(s.cat, region)}, la fonte che l'AI cita più spesso adesso è ${kind(next.name)}: compare ${pNel(next.share)} delle risposte.`,
       ];
       const sameBefore = history.slice(0, -1).filter((h) => h.source);
       if (sameBefore.length && sameBefore.every((h) => h.source === prior)) {
@@ -263,7 +301,7 @@
         kicker: "OTA e hotel",
         big: `${signed(ota[1])} punti`,
         title: ota[1] < 0 ? "Meno OTA nelle risposte" : "Più OTA nelle risposte",
-        text: `${At(NOW.month)} il ${pct(ota[0])} delle risposte cita almeno un'OTA, ${points(ota[1])} ${ota[1] < 0 ? "in meno" : "in più"} rispetto ${at(PREV.month)}. Il sito di un hotel compare nel ${pct(hotel[0])} delle risposte (${signed(hotel[1])} punti): su 100 fonti citate, ${fmt(NOW.perFonti.hotel, 0)} è il sito di un hotel.`,
+        text: `${At(NOW.month)} ${pIl(ota[0])} delle risposte cita almeno un'OTA, ${points(ota[1])} ${ota[1] < 0 ? "in meno" : "in più"} rispetto ${at(PREV.month)}. Il sito di un hotel compare ${pNel(hotel[0])} delle risposte (${signed(hotel[1])} punti): su 100 fonti citate, ${fmt(NOW.perFonti.hotel, 0)} è il sito di un hotel.`,
         base: `Tutte le risposte della rilevazione del ${NOW.published}, confrontate con ${PREV.month} sulle domande comuni`,
         href: `${SITE}/it/report/${NOW.id}`,
       });
@@ -276,7 +314,7 @@
         kicker: "Cinque assistenti",
         big: `${pct(sp.hi.v)} e ${pct(sp.lo.v)}`,
         title: "Stessa domanda, risposte diverse",
-        text: `Alle domande ${about(p.cat, p.region)}, ${sp.hi.name} propone ${p.name} nel ${pct(sp.hi.v)} delle risposte, ${sp.lo.name} nel ${pct(sp.lo.v)}. Le domande sono le stesse: cambia solo l'assistente.`,
+        text: `Alle domande ${about(p.cat, p.region)}, ${sp.hi.name} propone ${p.name} ${pNel(sp.hi.v)} delle risposte, ${sp.lo.name} ${pNel(sp.lo.v)}. Le domande sono le stesse: cambia solo l'assistente.`,
         base: `${cap(WORDS[p.nq] ?? String(p.nq))} domande ${about(p.cat, p.region)}, motore per motore`,
         href: p.href,
       });
@@ -432,8 +470,8 @@
   }
 
   window.OSS = {
-    D, SITE, MIN_Q, NOW, PREV, NEXT, REP, cats, CAT_ORDER, places, groups, regionRows, regionTable, wave, learnings, context, prep, about, aboutItaly,
-    fmt, pct, signed, points, thousands, esc, cap, at, At, ordinal, WORDS, withArt, deltaHTML, rankMoveHTML, enginesHTML, photo, creditHTML, storyPhotoName,
+    D, SITE, MIN_Q, NOW, PREV, NEXT, REP, whyLines, cats, CAT_ORDER, places, groups, regionRows, regionTable, wave, learnings, context, prep, about, aboutItaly,
+    fmt, pct, pNel, pAl, pIl, signed, points, thousands, esc, cap, at, At, ordinal, WORDS, withArt, deltaHTML, rankMoveHTML, enginesHTML, photo, creditHTML, storyPhotoName,
     renderTicker, initChrome, monthHref, wireMonthLinks, renderCredits, breadthHTML, catPage, isDmo, topIn,
   };
 })();

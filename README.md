@@ -32,7 +32,7 @@ Il database dell'osservatorio sta su S3 e non serve: se un giorno lo si legge di
 
 ## Pagine
 
-- `index.html`: la landing. Ticker, il mese in breve, tre notizie in evidenza, «Da sapere» (quattro numeri del mese con la loro base), chi si muove, classifiche delle regioni per categoria, archivio delle rilevazioni, regole di lettura, iscrizione (finta).
+- `index.html`: la landing. Ticker, il mese in breve, tre notizie in evidenza, «Da sapere» (quattro numeri del mese con la loro base, titolo sul mese di uscita), chi si muove con il perché probabile, classifiche delle regioni per categoria, regole di lettura, iscrizione (finta).
 - `mese.html?m=2026-10`: il numero del mese. Cinque notizie, tutti i movimenti con filtri e il numero di domande, nota su cosa diciamo e cosa no. Le rilevazioni di prima rimandano al loro report sul sito.
 
 ## Le regole delle notizie
@@ -43,6 +43,8 @@ Il database dell'osservatorio sta su S3 e non serve: se un giorno lo si legge di
 - **La salita e la discesa più grandi** oltre l'oscillazione;
 - **La sorpresa**: la località che entra in classifica con la presenza più alta;
 - **Cambia la fonte**: fra le prime tre regioni di ogni categoria, la fonte più citata cambia rispetto al mese prima (prima i siti di promozione turistica).
+
+In «chi si muove» la i apre un perché probabile (`whyLines` in `js/core.js`), letto negli stessi numeri: chi si muove al contrario nella stessa classifica (almeno 3 punti), se sale o scende quasi tutta la classifica, quanto sono distanti gli assistenti, quante domande ci sono dietro. È un'ipotesi e la pagina lo dice.
 
 Per le notizie, il ticker e «chi si muove» contano solo le classifiche con almeno quattro domande (`MIN_Q`): con una o due, una sola risposta sposta molti punti. Quei movimenti restano nella tabella del mese, con il numero di domande accanto.
 

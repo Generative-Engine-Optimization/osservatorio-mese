@@ -33,7 +33,7 @@
       ctx = O.context(p.cat, p.region);
       big = story.type === "sorpresa"
         ? `<strong class="new">${pct(p.now)}</strong><span>delle risposte, la prima volta in classifica</span>`
-        : `<strong class="${kind}">${kind === "up" ? "▲" : "▼"} ${fmt(Math.abs(p.delta))}</strong><span>punti · ora al ${pct(p.now)} delle risposte</span>`;
+        : `<strong class="${kind}">${kind === "up" ? "▲" : "▼"} ${fmt(Math.abs(p.delta))}</strong><span>punti · ora ${O.pAl(p.now)} delle risposte</span>`;
     }
     return `
       <article class="feature${lead ? " feature-lead" : ""}${ph ? "" : " feature-type"}">
@@ -50,7 +50,9 @@
   const pick = (t) => W.stories.find((s) => s.type === t);
   document.getElementById("features").innerHTML = ["primo", "salita", "discesa"].map((t, i) => pick(t) && featureCard(pick(t), i === 0)).join("");
 
-  document.getElementById("learn-title").textContent = `Da sapere ${at(month)}`;
+  // The issue goes out the first day of the month after the survey: «Da sapere a novembre» for October's numbers.
+  const issueMonth = NOW.published.split(" ")[1];
+  document.getElementById("learn-title").textContent = `Da sapere ${at(issueMonth)}`;
   document.getElementById("learn").innerHTML = O.learnings().map((l) => `
     <article class="card learn">
       <span class="learn-k">${esc(l.kicker)}</span>
@@ -61,17 +63,32 @@
     </article>`).join("");
 
   document.getElementById("movers-title").textContent = `Chi si muove ${at(month)}`;
-  document.getElementById("movers-sub").textContent = `Variazioni in punti rispetto ${at(prevMonth)}, solo oltre l'oscillazione normale e solo nelle classifiche con almeno ${O.WORDS[O.MIN_Q]} domande: con meno, una sola risposta sposta troppi punti. Tutte le altre sono nella pagina del mese.`;
-  const moverRow = (r) => `
-    <a class="mrow" href="${O.monthHref("#tutti", r.cat)}">
-      <div><span class="name">${esc(r.name)}</span><span class="ctx">${esc(O.context(r.cat, r.region))}</span></div>
+  document.getElementById("movers-sub").textContent = `Variazioni in punti rispetto ${at(prevMonth)}, solo oltre l'oscillazione normale e solo nelle classifiche con almeno ${O.WORDS[O.MIN_Q]} domande: con meno, una sola risposta sposta troppi punti. Tutte le altre sono nella pagina del mese. Con la i vedi il perché più probabile.`;
+  let whyId = 0;
+  const moverRow = (r) => {
+    const id = `why-${++whyId}`;
+    const lines = O.whyLines(r);
+    return `
+    <div class="mrow">
+      <div><a class="name" href="${O.monthHref("#tutti", r.cat)}">${esc(r.name)}</a><span class="ctx">${esc(O.context(r.cat, r.region))}</span></div>
       <span class="pos-cell">${O.ordinal(r.rank)} ${O.rankMoveHTML(r)}</span>
       <span class="val">${pct(r.now)}</span>
       ${O.deltaHTML(r)}
-    </a>`;
+      ${lines.length ? `<button class="why-btn" type="button" aria-expanded="false" aria-controls="${id}" aria-label="${esc(`Perché ${r.name} ${r.status === "up" ? "sale" : "scende"}, probabilmente`)}"><span aria-hidden="true">i</span></button>` : "<span></span>"}
+      ${lines.length ? `<div class="why" id="${id}" hidden><p class="why-h">Perché, probabilmente</p>${lines.map((l) => `<p>${esc(l)}</p>`).join("")}<p class="why-note">Un'ipotesi letta nei numeri del mese, non una causa verificata.</p></div>` : ""}
+    </div>`;
+  };
   document.getElementById("movers").innerHTML = `
     <div class="card"><h3><i style="background:var(--up)"></i>Salgono di più</h3>${W.solidUp.slice(0, 6).map(moverRow).join("")}</div>
     <div class="card"><h3><i style="background:var(--down)"></i>Scendono di più</h3>${W.solidDown.slice(0, 6).map(moverRow).join("")}</div>`;
+  document.getElementById("movers").addEventListener("click", (e) => {
+    const b = e.target.closest(".why-btn");
+    if (!b) return;
+    const panel = document.getElementById(b.getAttribute("aria-controls"));
+    const open = b.getAttribute("aria-expanded") !== "true";
+    b.setAttribute("aria-expanded", String(open));
+    panel.hidden = !open;
+  });
   const entered = W.entered.filter((r) => r.nq >= 2).slice(0, 8);
   document.getElementById("entries").innerHTML = entered.length
     ? `<span>Entrano in classifica:</span>${entered.map((r) => `<span class="pill"><span class="move-new">•</span><b>${esc(r.name)}</b> ${pct(r.now)} <span class="mono" style="font-size:12px;color:var(--ink-muted)">${esc(O.context(r.cat, r.region))}</span></span>`).join("")}<a class="pill pill-more" href="${O.monthHref("#tutti")}">tutte le ${W.entered.length} <span class="arrow">→</span></a>`
@@ -115,27 +132,6 @@
   panel.setAttribute("aria-labelledby", `tab-${current}`);
   renderTable();
 
-  // Every survey: this month's issue here, the earlier ones on the observatory's report pages.
-  const lead = W.stories[0];
-  const leadPhoto = lead && O.storyPhotoName(lead);
-  const issues = [...O.REP].reverse().map((rep, k) => {
-    const isNow = k === 0;
-    const first = (cat) => O.topIn(rep, cat)[0];
-    const lines = ["mare", "borghi", "neve"].map((c) => first(c) && `${O.cats[c].label}: prima ${first(c)[0]}, ${pct(first(c)[1])}`).filter(Boolean);
-    const ph = isNow && leadPhoto && O.photo(leadPhoto);
-    return `
-      <a class="card issue${isNow ? " is-current" : ""}" href="${isNow ? O.monthHref() : `${O.SITE}/it/report/${rep.id}`}"${isNow ? "" : ' target="_blank" rel="noopener"'}>
-        <div class="issue-img${ph ? "" : " issue-img-type"}">${ph ? `<img src="img/${esc(ph.file)}" alt="" loading="lazy">` : `<span class="issue-word" aria-hidden="true">${esc(cap(rep.month))}</span>`}<span class="chip">${isNow ? "Questo mese" : "Report"}</span></div>
-        <div class="issue-body">
-          <span class="issue-meta">${esc(cap(rep.month))} 2026 · rilevazione del ${esc(rep.published)}</span>
-          <h3>${isNow && lead ? esc(lead.title) : esc(lines[0] ?? "")}</h3>
-          <p>${isNow ? esc(W.stories.slice(1, 3).map((s) => s.title).join(". ")) + "." : esc(lines.slice(1).join(". ")) + "."}</p>
-          <span class="more">${isNow ? "Leggi il numero" : "Il report sul sito"} <span class="arrow">→</span></span>
-        </div>
-      </a>`;
-  });
-  document.getElementById("issues").innerHTML = issues.join("");
-
   const ex = W.solidUp[0];
   const st = W.solidStable.find((r) => r.delta && Math.abs(r.delta) >= 3) ?? W.solidStable[0];
   document.getElementById("rules").innerHTML = [
@@ -144,7 +140,7 @@
       `<span class="delta delta-up">▲ 2</span><span>non</span><span class="delta delta-stable" style="text-decoration:line-through">+100%</span>`],
     ["03", "Stabile vuol dire stabile", "Le stesse domande fatte più volte nello stesso mese danno risposte un po' diverse. Se la variazione resta dentro questa oscillazione, niente verde e niente rosso.",
       ex && st ? `${O.deltaHTML(st)}<span>stabile</span>${O.deltaHTML(ex)}<span>sale</span>` : ""],
-    ["04", "Cosa cambia, non perché", "Registriamo cosa risponde l'AI, non il motivo. Se cambia il modello di un assistente lo scriviamo, perché sposta tutti insieme."],
+    ["04", "Il perché è un'ipotesi", "Registriamo cosa risponde l'AI. Accanto ai movimenti più grandi proponiamo un perché probabile, letto negli stessi numeri: un'ipotesi, non una causa verificata."],
   ].map(([n, h, p, extra]) => `<div class="card rule"><span class="n">${n}</span><h3>${h}</h3><p>${p}</p>${extra ? `<div class="example">${extra}</div>` : ""}</div>`).join("");
 
   O.renderCredits(document.getElementById("credits"));
