@@ -65,6 +65,20 @@
   const catPage = (cat, slug) => `${SITE}/it/categorie/${cat}${slug ? `/${slug}` : ""}`;
   const isDmo = (name) => D.dmos.includes(name);
 
+  // The pages inside the prototype: one template per level, the page in the address (one JSON file each in data/).
+  const regionSlugs = Object.fromEntries(Object.entries(D.regionNames).map(([slug, name]) => [name, slug]));
+  const regionPages = new Set(D.regions.filter((r) => r[10]).map((r) => `${r[0]}/${r[1]}`));
+  const anchorId = (name) => `l-${String(name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+  const catHref = (cat) => `categoria.html?c=${cat}`;
+  const hasRegionPage = (cat, slug) => regionPages.has(`${cat}/${slug}`);
+  // A region without its own page in a category (none in the sitemap) opens the category's ranking.
+  const regionHref = (cat, slug) => (hasRegionPage(cat, slug) ? `regione.html?c=${cat}&r=${slug}` : catHref(cat));
+  const regionHrefByName = (cat, name) => regionHref(cat, regionSlugs[name] ?? "");
+  // A place with its hotels measured has its own page; the others open their row in the region's ranking.
+  const placeHref = (cat, slug, place, placeSlug) => (placeSlug ? `localita.html?c=${cat}&r=${slug}&l=${placeSlug}` : `${regionHref(cat, slug)}#${anchorId(place)}`);
+  const isExternal = (href) => /^https?:/.test(href);
+  const linkAttrs = (href) => `href="${String(href).replace(/"/g, "&quot;")}"${isExternal(href) ? ' target="_blank" rel="noopener"' : ""}`;
+
   function prevRankOf(rank, move, by) {
     if (move === "up") return rank + by;
     if (move === "down") return rank - by;
@@ -72,12 +86,13 @@
     return null;
   }
 
-  const places = D.places.map(([cat, slug, name, kind, rank, now, delta, status, move, by]) => {
+  const places = D.places.map(([cat, slug, name, kind, rank, now, delta, status, move, by, placeSlug]) => {
     const group = `${cat}/${slug}`;
     return {
       id: `${cat}-${slug}-${name}`, cat, slug, region: regionName(slug), name, kind, rank, now, delta, status, move, by,
       prevRank: prevRankOf(rank, move, by), group, nq: D.questions[group] ?? 0,
-      engines: D.placeEngines[`${group}/${name}`] ?? null, href: catPage(cat, slug),
+      engines: D.placeEngines[`${group}/${name}`] ?? null, href: regionHref(cat, slug), site: catPage(cat, slug),
+      placeSlug: placeSlug ?? null, page: placeHref(cat, slug, name, placeSlug),
     };
   });
   const groups = new Map();
@@ -88,7 +103,7 @@
 
   const regionRows = D.regions.map(([cat, slug, rank, now, delta, status, move, by, source, sourceShare]) => ({
     cat, slug, region: regionName(slug), rank, now, delta, status, move, by, prevRank: prevRankOf(rank, move, by),
-    source: source ? { name: source, share: sourceShare, dmo: isDmo(source) } : null, href: catPage(cat, slug),
+    source: source ? { name: source, share: sourceShare, dmo: isDmo(source) } : null, href: regionHref(cat, slug),
   }));
   const regionTable = (cat) => regionRows.filter((r) => r.cat === cat).sort((a, b) => a.rank - b.rank);
 
@@ -294,7 +309,7 @@
         title: `Per ${WORDS[italia.length] ?? italia.length} regioni su ${general.length} parla Italia.it`,
         text: `Quando l'AI risponde su una regione in generale, in ${italia.length} regioni su ${general.length} la fonte che cita di più è Italia.it, il portale nazionale. Il sito di promozione della regione è primo in ${WORDS[own.length] ?? own.length}: ${own.map((r) => r.region).join(", ").replace(/, ([^,]*)$/, " e $1")}.`,
         base: "Le domande sulle regioni in generale, regione per regione",
-        href: catPage("regione"),
+        href: catHref("regione"),
       });
     }
     const ota = NOW.shares.ota, hotel = NOW.shares.hotel;
@@ -405,19 +420,21 @@
     return { items, regions };
   }
 
-  function tickerItemHTML(r, region = false) {
+  // Every name in the ticker opens its page; the second copy of the track is only there for the loop.
+  function tickerItemHTML(r, region = false, copy = false) {
     const name = region ? r.region : r.name;
     const ctx = region ? "La regione in generale" : context(r.cat, r.region);
-    return `<li class="tk tk-${r.status}"><span class="tk-name">${esc(name)}</span><span class="tk-ctx">${esc(ctx)}</span><span class="tk-val">${pct(r.now)}</span>${deltaHTML(r, { compact: true })}</li>`;
+    const href = region ? r.href : r.page;
+    return `<li class="tk tk-${r.status}"><a class="tk-name" href="${esc(href)}"${copy ? ' tabindex="-1"' : ""}>${esc(name)}</a><span class="tk-ctx">${esc(ctx)}</span><span class="tk-val">${pct(r.now)}</span>${deltaHTML(r, { compact: true })}</li>`;
   }
 
   function renderTicker(el) {
     const { items, regions } = tickerItems();
-    const body = items.map((r) => tickerItemHTML(r)).join("") + regions.map((r) => tickerItemHTML(r, true)).join("");
+    const body = (copy) => items.map((r) => tickerItemHTML(r, false, copy)).join("") + regions.map((r) => tickerItemHTML(r, true, copy)).join("");
     el.innerHTML = `
       <div class="ticker-label"><span class="ticker-live"></span><span>${esc(cap(NOW.month))}<br><small>su ${esc(PREV.month)}</small></span></div>
       <div class="ticker-window" tabindex="0" aria-label="Movimenti di ${esc(NOW.month)} rispetto a ${esc(PREV.month)}">
-        <ul class="ticker-track">${body}</ul><ul class="ticker-track" aria-hidden="true">${body}</ul>
+        <ul class="ticker-track">${body(false)}</ul><ul class="ticker-track" aria-hidden="true">${body(true)}</ul>
       </div>
       <button class="ticker-toggle" type="button" aria-pressed="false" aria-label="Ferma lo scorrimento"><span aria-hidden="true">❚❚</span></button>`;
     const btn = el.querySelector(".ticker-toggle");
@@ -495,5 +512,7 @@
     D, SITE, MIN_Q, NOW, PREV, NEXT, REP, whyLines, cats, CAT_ORDER, places, groups, regionRows, regionTable, wave, learnings, context, prep, about, aboutItaly,
     fmt, pct, pNel, pAl, pIl, signed, points, thousands, esc, cap, at, At, ordinal, WORDS, withArt, deltaHTML, rankMoveHTML, enginesHTML, photo, creditHTML, storyPhotoName, thumbHTML, photoImgHTML,
     renderTicker, initChrome, monthHref, wireMonthLinks, renderCredits, breadthHTML, catPage, isDmo, topIn,
+    catHref, regionHref, regionHrefByName, placeHref, hasRegionPage, anchorId, regionSlugs, linkAttrs, isExternal, regionName,
+    ofRegion, onRegion, AMONG, ON_CAT,
   };
 })();

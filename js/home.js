@@ -60,7 +60,7 @@
       <strong class="learn-big">${esc(l.big)}</strong>
       <h3>${esc(l.title)}</h3>
       <p>${esc(l.text)}</p>
-      <a class="learn-base" href="${esc(l.href)}" target="_blank" rel="noopener">Base: ${esc(l.base)} <span class="arrow">→</span></a>
+      <a class="learn-base" ${O.linkAttrs(l.href)}>Base: ${esc(l.base)} <span class="arrow">→</span></a>
     </article>`).join("");
 
   document.getElementById("movers-title").textContent = `Chi si muove ${at(month)}`;
@@ -72,7 +72,7 @@
     return `
     <div class="mrow">
       ${O.thumbHTML(r.name)}
-      <div><a class="name" href="${O.monthHref("#tutti", r.cat)}">${esc(r.name)}</a><span class="ctx">${esc(O.context(r.cat, r.region))}</span></div>
+      <div><a class="name" href="${esc(r.page)}">${esc(r.name)}</a><a class="ctx" href="${esc(r.href)}">${esc(O.context(r.cat, r.region))}</a></div>
       <span class="pos-cell">${O.ordinal(r.rank)} ${O.rankMoveHTML(r)}</span>
       <span class="val">${pct(r.now)}</span>
       ${O.deltaHTML(r)}
@@ -93,7 +93,7 @@
   });
   const entered = W.entered.filter((r) => r.nq >= 2).slice(0, 8);
   document.getElementById("entries").innerHTML = entered.length
-    ? `<span>Entrano in classifica:</span>${entered.map((r) => `<span class="pill"><span class="move-new">•</span><b>${esc(r.name)}</b> ${pct(r.now)} <span class="mono" style="font-size:12px;color:var(--ink-muted)">${esc(O.context(r.cat, r.region))}</span></span>`).join("")}<a class="pill pill-more" href="${O.monthHref("#tutti")}">tutte le ${W.entered.length} <span class="arrow">→</span></a>`
+    ? `<span>Entrano in classifica:</span>${entered.map((r) => `<a class="pill pill-link" href="${esc(r.page)}"><span class="move-new">•</span><b>${esc(r.name)}</b> ${pct(r.now)} <span class="mono" style="font-size:12px;color:var(--ink-muted)">${esc(O.context(r.cat, r.region))}</span></a>`).join("")}<a class="pill pill-more" href="${O.monthHref("#tutti")}">tutte le ${W.entered.length} <span class="arrow">→</span></a>`
     : "";
 
   const tabs = document.getElementById("tabs");
@@ -110,13 +110,13 @@
         <div class="rrow">
           <span class="pos">${r.status === "none" ? "–" : r.rank}</span>
           <span class="move-cell">${O.rankMoveHTML(r)}</span>
-          <a class="region" href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.region)}</a>
+          <a class="region" href="${esc(r.href)}">${esc(r.region)}</a>
           <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:${r.now}%"></span></span><span class="bar-val">${pct(r.now)}</span></span>
           <span>${O.deltaHTML(r)}</span>
           <span class="src">${r.source ? `${esc(r.source.name)}<small>${pct(r.source.share)} delle risposte</small>` : "–"}</span>
         </div>`).join("")}
       <div class="table-foot">
-        <span>Presenza: su 100 risposte alle domande ${esc(O.aboutItaly(current))}, in quante l'AI nomina almeno una località della regione. <a href="${esc(O.catPage(current))}" target="_blank" rel="noopener">La classifica sul sito</a></span>
+        <span>Presenza: su 100 risposte alle domande ${esc(O.aboutItaly(current))}, in quante l'AI nomina almeno una località della regione. ${O.D.questions[current]} domande. <a href="${esc(O.catHref(current))}">${esc(O.cats[current].label)}: le regioni, le fonti e le domande</a></span>
         ${rows.length > 10 ? `<button type="button" id="more">${expanded ? "Mostra le prime 10" : `Mostra tutte le ${rows.length} regioni`}</button>` : ""}
       </div>`;
     panel.querySelector("#more")?.addEventListener("click", () => { expanded = !expanded; renderTable(); });

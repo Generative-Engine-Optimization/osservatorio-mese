@@ -38,7 +38,7 @@
   }
 
   const factsHTML = (items) => `<dl class="facts">${items.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
-  const siteLink = (href, label = "sul sito") => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>`;
+  const pageLink = (href, label) => `<a ${O.linkAttrs(href)}>${esc(label)}</a>`;
 
   function dataBlock(s) {
     if (s.type === "salita" || s.type === "discesa" || s.type === "sorpresa") {
@@ -46,14 +46,14 @@
       const facts = [
         ["Posizione", `${O.ordinal(p.rank)}${p.prevRank && p.prevRank !== p.rank ? ` <span class="was">era ${O.ordinal(p.prevRank)}</span>` : ""}`],
         ["Base", `${p.nq} ${p.nq === 1 ? "domanda" : "domande"}, cinque assistenti`],
-        ["Classifica", siteLink(p.href, `${O.context(p.cat, p.region)}`)],
+        ["Classifica", pageLink(p.href, `${O.context(p.cat, p.region)}`)],
       ];
-      return `<div class="story-data"><div class="figure"><strong>${pct(p.now)}</strong>${O.deltaHTML(p)}<span class="figure-sub">delle risposte · ${esc(O.context(p.cat, p.region))}</span></div>${factsHTML(facts)}</div>`;
+      return `<div class="story-data"><div class="figure"><strong>${pct(p.now)}</strong>${O.deltaHTML(p)}<span class="figure-sub">delle risposte · <a href="${esc(p.href)}">${esc(O.context(p.cat, p.region))}</a></span></div>${factsHTML(facts)}</div>`;
     }
     if (s.type === "primo" && s.kind === "regione") {
       const before = O.topIn(PREV, s.cat);
       const now = O.regionTable(s.cat).slice(0, 3);
-      const col = (label, rows) => `<div class="podium"><span class="podium-h">${esc(cap(label))}</span><ol>${rows.map(([name, v]) => `<li class="${name === s.now.region ? "hl" : name === s.before[0] ? "hl2" : ""}"><span>${esc(name)}</span><b>${pct(v)}</b></li>`).join("")}</ol></div>`;
+      const col = (label, rows) => `<div class="podium"><span class="podium-h">${esc(cap(label))}</span><ol>${rows.map(([name, v]) => `<li class="${name === s.now.region ? "hl" : name === s.before[0] ? "hl2" : ""}"><a href="${esc(O.regionHrefByName(s.cat, name))}">${esc(name)}</a><b>${pct(v)}</b></li>`).join("")}</ol></div>`;
       return `<div class="story-data podiums">${col(prevMonth, before.map((r) => [r[0], r[1]]))}<span class="podium-arrow arrow" aria-hidden="true">→</span>${col(month, now.map((r) => [r.region, r.now]))}</div>`;
     }
     if (s.type === "primo") {
@@ -63,10 +63,25 @@
       return `<div class="story-data">${factsHTML([
         [s.next.name, s.next.share != null ? `${pct(s.next.share)} <span class="was">delle risposte</span>` : "prima fonte"],
         [cap(prevMonth), esc(s.prior)],
-        ["Categoria", siteLink(O.catPage(s.cat), `${O.cats[s.cat].label} · ${s.region}`)],
+        ["Categoria", pageLink(O.regionHrefByName(s.cat, s.region), `${O.cats[s.cat].label} · ${s.region}`)],
       ])}</div>`;
     }
     return "";
+  }
+
+  // Where to go from a story: the place's page with its hotels, the ranking it moves in.
+  function storyLinks(s) {
+    const links = [];
+    const p = s.place ?? (s.type === "primo" && s.kind !== "regione" ? s.now : null);
+    if (p?.placeSlug) links.push([p.page, `${p.name}: gli hotel e le fonti`]);
+    if (p) links.push([p.href, `La classifica: ${O.context(p.cat, p.region)}`]);
+    if (s.type === "primo" && s.kind === "regione") {
+      links.push([O.regionHref(s.cat, s.now.slug), `${O.cats[s.cat].label} · ${s.now.region}: le località`]);
+      links.push([O.catHref(s.cat), `${O.cats[s.cat].label}: tutte le regioni`]);
+    }
+    if (s.type === "fonte") links.push([`${O.regionHrefByName(s.cat, s.region)}#chi-racconta`, `${O.context(s.cat, s.region)}: chi racconta il territorio`]);
+    if (!links.length) return "";
+    return `<ul class="story-links">${links.map(([href, label]) => `<li><a href="${esc(href)}">${esc(label)} <span class="arrow">→</span></a></li>`).join("")}</ul>`;
   }
 
   function mediaHTML(s) {
@@ -99,6 +114,7 @@
           ${dataBlock(s)}
           ${chartHTML(s)}
           ${s.lines.map((l) => `<p>${esc(l)}</p>`).join("")}
+          ${storyLinks(s)}
           ${watchText(s)}
         </div>
       </div>
@@ -131,7 +147,7 @@
       <div class="arow arow-head" aria-hidden="true"><span>Località</span><span class="num prev">Domande</span><span class="num">${esc(cap(month))}</span><span>Var.</span><span class="h-pos">Posizione</span></div>
       ${rows.map((r) => `
         <div class="arow">
-          <div><span class="name">${esc(r.name)}</span><span class="ctx">${esc(O.context(r.cat, r.region))}</span></div>
+          <div><a class="name" href="${esc(r.page)}">${esc(r.name)}</a><a class="ctx" href="${esc(r.href)}">${esc(O.context(r.cat, r.region))}</a></div>
           <span class="num prev">${r.nq || "–"}</span>
           <span class="num strong">${pct(r.now)}</span>
           <span>${O.deltaHTML(r)}</span>
