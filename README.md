@@ -51,6 +51,6 @@ Per le notizie, il ticker e «chi si muove» contano solo le classifiche con alm
 ## Cosa manca
 
 - Lo storico mese per mese delle località: le pagine pubbliche danno solo il mese corrente e il ± sul precedente. Con il database si possono rimettere i grafici di andamento.
-- Le foto delle località in evidenza: ci sono per Civita di Bagnoregio, Val Ferret e Follonica (Wikimedia Commons, crediti in `build/foto.json`, `pos` sposta il ritaglio); le altre schede usano il nome.
+- Le foto: ci sono per le notizie, per le località di «chi si muove» e per le schede «Da sapere» (Wikimedia Commons, crediti in `build/foto.json`, `pos` sposta il ritaglio, miniature in `img/t/` fatte con `sips -Z 240`). Quando i dati di un mese scelgono località nuove, servono foto nuove; senza foto la scheda usa il nome.
 - La nota sui cambi di modello dei motori nel mese.
 - Iscrizione al bollettino: il modulo non invia niente.

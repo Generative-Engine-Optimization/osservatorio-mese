@@ -54,7 +54,8 @@
   const issueMonth = NOW.published.split(" ")[1];
   document.getElementById("learn-title").textContent = `Da sapere ${at(issueMonth)}`;
   document.getElementById("learn").innerHTML = O.learnings().map((l) => `
-    <article class="card learn">
+    <article class="card learn${O.photo(l.photo) ? " has-img" : ""}">
+      ${O.photo(l.photo) ? `<figure class="learn-img">${O.photoImgHTML(l.photo)}<figcaption>${O.creditHTML(l.photo)}</figcaption></figure>` : ""}
       <span class="learn-k">${esc(l.kicker)}</span>
       <strong class="learn-big">${esc(l.big)}</strong>
       <h3>${esc(l.title)}</h3>
@@ -70,6 +71,7 @@
     const lines = O.whyLines(r);
     return `
     <div class="mrow">
+      ${O.thumbHTML(r.name)}
       <div><a class="name" href="${O.monthHref("#tutti", r.cat)}">${esc(r.name)}</a><span class="ctx">${esc(O.context(r.cat, r.region))}</span></div>
       <span class="pos-cell">${O.ordinal(r.rank)} ${O.rankMoveHTML(r)}</span>
       <span class="val">${pct(r.now)}</span>

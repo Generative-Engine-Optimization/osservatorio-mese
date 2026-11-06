@@ -275,6 +275,7 @@
     if (papers && papers[1] > NOW.perFonti.dmo) {
       out.push({
         kicker: "Chi racconta l'Italia",
+        photo: "Edicola",
         big: `${fmt(papers[1], 0)} su 100`,
         title: "L'AI cita più i giornali che i siti del turismo",
         text: `Su 100 fonti citate nelle risposte ${at(NOW.month)}, ${fmt(papers[1], 0)} sono giornali e riviste, ${fmt(NOW.perFonti.dmo, 0)} siti di promozione turistica e ${fmt(NOW.perFonti.ota, 0)} OTA. I più citati fra i giornali: ${papers[2].split(" · ").join(", ")}.`,
@@ -288,6 +289,7 @@
     if (italia.length) {
       out.push({
         kicker: "La fonte più citata",
+        photo: "Val d'Orcia",
         big: `${italia.length} su ${general.length}`,
         title: `Per ${WORDS[italia.length] ?? italia.length} regioni su ${general.length} parla Italia.it`,
         text: `Quando l'AI risponde su una regione in generale, in ${italia.length} regioni su ${general.length} la fonte che cita di più è Italia.it, il portale nazionale. Il sito di promozione della regione è primo in ${WORDS[own.length] ?? own.length}: ${own.map((r) => r.region).join(", ").replace(/, ([^,]*)$/, " e $1")}.`,
@@ -299,6 +301,7 @@
     if (ota[1] != null) {
       out.push({
         kicker: "OTA e hotel",
+        photo: "Hotel",
         big: `${signed(ota[1])} punti`,
         title: ota[1] < 0 ? "Meno OTA nelle risposte" : "Più OTA nelle risposte",
         text: `${At(NOW.month)} ${pIl(ota[0])} delle risposte cita almeno un'OTA, ${points(ota[1])} ${ota[1] < 0 ? "in meno" : "in più"} rispetto ${at(PREV.month)}. Il sito di un hotel compare ${pNel(hotel[0])} delle risposte (${signed(hotel[1])} punti): su 100 fonti citate, ${fmt(NOW.perFonti.hotel, 0)} è il sito di un hotel.`,
@@ -312,6 +315,7 @@
       const { p, sp } = spread;
       out.push({
         kicker: "Cinque assistenti",
+        photo: p.name,
         big: `${pct(sp.hi.v)} e ${pct(sp.lo.v)}`,
         title: "Stessa domanda, risposte diverse",
         text: `Alle domande ${about(p.cat, p.region)}, ${sp.hi.name} propone ${p.name} ${pNel(sp.hi.v)} delle risposte, ${sp.lo.name} ${pNel(sp.lo.v)}. Le domande sono le stesse: cambia solo l'assistente.`,
@@ -362,7 +366,25 @@
     if (s.place) return s.place.name;
     if (s.type === "primo" && s.kind === "regione") return groups.get(`${s.cat}/${s.now.slug}`)?.[0]?.name ?? null;
     if (s.type === "primo") return s.now.name;
+    if (s.type === "fonte") {
+      const row = regionRows.find((r) => r.cat === s.cat && r.region === s.region);
+      return row ? groups.get(`${s.cat}/${row.slug}`)?.[0]?.name ?? null : null;
+    }
     return null;
+  }
+
+  // A small square photo for lists; the thumbnail sits in img/t/ with the same file name.
+  function thumbHTML(name) {
+    const p = photo(name);
+    if (!p) return `<span class="thumb thumb-empty" aria-hidden="true"></span>`;
+    used.add(name);
+    return `<img class="thumb" src="img/t/${esc(p.file)}" alt=""${p.pos ? ` style="object-position:${esc(p.pos)}"` : ""} loading="lazy">`;
+  }
+  function photoImgHTML(name, cls = "") {
+    const p = photo(name);
+    if (!p) return "";
+    used.add(name);
+    return `<img${cls ? ` class="${cls}"` : ""} src="img/${esc(p.file)}" alt=""${p.pos ? ` style="object-position:${esc(p.pos)}"` : ""} loading="lazy">`;
   }
 
   function tickerItems() {
@@ -471,7 +493,7 @@
 
   window.OSS = {
     D, SITE, MIN_Q, NOW, PREV, NEXT, REP, whyLines, cats, CAT_ORDER, places, groups, regionRows, regionTable, wave, learnings, context, prep, about, aboutItaly,
-    fmt, pct, pNel, pAl, pIl, signed, points, thousands, esc, cap, at, At, ordinal, WORDS, withArt, deltaHTML, rankMoveHTML, enginesHTML, photo, creditHTML, storyPhotoName,
+    fmt, pct, pNel, pAl, pIl, signed, points, thousands, esc, cap, at, At, ordinal, WORDS, withArt, deltaHTML, rankMoveHTML, enginesHTML, photo, creditHTML, storyPhotoName, thumbHTML, photoImgHTML,
     renderTicker, initChrome, monthHref, wireMonthLinks, renderCredits, breadthHTML, catPage, isDmo, topIn,
   };
 })();

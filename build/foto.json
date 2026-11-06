@@ -83,5 +83,95 @@
   "author": "Andrea Anselmi",
   "license": "CC BY-SA 4.0",
   "url": "https://commons.wikimedia.org/wiki/File:Vista_di_Follonica.jpg"
+ },
+ "Ravello": {
+  "file": "ravello.jpg",
+  "author": "Tanzania",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Province_of_Salerno_-_Ravello_-_20200723151135.jpg"
+ },
+ "Finalborgo": {
+  "file": "finalborgo.jpg",
+  "author": "Davide Mauro",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Scorcio_di_Finalborgo.jpg"
+ },
+ "Monte Pollino": {
+  "file": "pollino.jpg",
+  "author": "Fernando Santopaolo at Italian Wikipedia",
+  "license": "Public domain",
+  "url": "https://commons.wikimedia.org/wiki/File:Monte_Pollino_(P.N.P.).jpg"
+ },
+ "Cilento": {
+  "file": "cilento.jpg",
+  "author": "NPVF",
+  "license": "CC BY 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Cilento-Coast.JPG"
+ },
+ "Massa Lubrense": {
+  "file": "massa-lubrense.jpg",
+  "author": "Giuseppe Guida",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Massa_Lubrense_(NA)._Punta_San_Lorenzo.jpg"
+ },
+ "Campo di Giove": {
+  "file": "campo-di-giove.jpg",
+  "author": "Davipar",
+  "license": "Public domain",
+  "url": "https://commons.wikimedia.org/wiki/File:Campo_di_Giove_visto_dalla_zona_Belvedere.jpg"
+ },
+ "Bari": {
+  "file": "bari.jpg",
+  "author": "Benjamin Smith",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Bari_-_Lungomare_Imperatore_Augusto_%26_Mare.jpg"
+ },
+ "Lago di Como": {
+  "file": "lago-di-como.jpg",
+  "author": "Mænsard vokser",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Panoramic_view_of_Como_Lake_(Lago_di_Como),_seen_from_the_mountain_Monte_Grona_-_Plesio_(Como)_2015-10-25.JPG"
+ },
+ "Milano": {
+  "file": "milano.jpg",
+  "author": "Steffen Schmitz",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Milano,_Duomo_with_Milan_Cathedral_and_Galleria_Vittorio_Emanuele_II,_2016.jpg"
+ },
+ "Parco della Murgia Materana": {
+  "file": "murgia.jpg",
+  "author": "Benjamin Smith",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Matera_-_View_of_Parco_della_Murgia_Materana_from_Via_San_Potito.jpg"
+ },
+ "Camporotondo": {
+  "file": "camporotondo.jpg",
+  "author": "pietro scerrato",
+  "license": "CC BY 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Cavalli_e_mucche_al_pascolo_in_alta_quota_-_panoramio.jpg"
+ },
+ "Isola d'Ischia": {
+  "file": "ischia.jpg",
+  "author": "Dudva",
+  "license": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:Castello_Aragonese_(Ischia).jpg"
+ },
+ "Edicola": {
+  "file": "edicola.jpg",
+  "author": "Mozzihh",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Newsstand_Cremona_2303-0066.jpg"
+ },
+ "Val d'Orcia": {
+  "file": "val-dorcia.jpg",
+  "author": "Fabrizio Lunardi",
+  "license": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:Val_D_Orcia_In_Autumn_(179351679).jpeg"
+ },
+ "Hotel": {
+  "file": "albergo.jpg",
+  "author": "Daniela Manili Pessina",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Albergo_Posta_-_dettaglio_della_facciata.jpg"
  }
 }

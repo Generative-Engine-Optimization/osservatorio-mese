@@ -70,22 +70,20 @@
   }
 
   function mediaHTML(s) {
-    if (s.type === "fonte") {
-      return `<div class="story-media chart-media"><div class="chart-card">
-        <span class="chart-h">La fonte più citata, mese per mese · ${esc(O.cats[s.cat].label.toLowerCase())} ${esc(O.prep(s.region))}</span>
-        <ol class="timeline">${s.history.map((h, i) => `<li class="${h.source && O.isDmo(h.source) ? "is-dmo" : ""}${i === s.history.length - 1 ? " is-now" : ""}"><span class="tl-m">${esc(h.month)}</span><span class="tl-s">${h.source ? `<i></i>${esc(h.source)}` : `<span class="tl-none">fuori dalle prime tre</span>`}</span></li>`).join("")}</ol>
-        <p class="tl-note">Pallino viola: sito di promozione turistica. Dai report di ogni rilevazione, finché la regione è fra le prime tre della categoria.</p>
-      </div></div>`;
-    }
     const name = O.storyPhotoName(s);
     const ph = name && O.photo(name);
-    const label = s.place?.name ?? s.now.region ?? s.now.name;
+    const label = s.place?.name ?? s.now?.region ?? s.now?.name ?? s.region;
     if (!ph) return `<div class="story-media story-media-empty"><span>${esc(label)}</span></div>`;
     const caption = name !== label ? `<span>${esc(name)}</span> · ` : "";
     return `<figure class="story-media"><img src="img/${esc(ph.file)}" alt="${esc(name)}"${ph.pos ? ` style="object-position:${esc(ph.pos)}"` : ""} loading="lazy"><figcaption>${caption}${O.creditHTML(name)}</figcaption></figure>`;
   }
 
   function chartHTML(s) {
+    if (s.type === "fonte") {
+      return `<div class="story-chart"><span class="chart-h">La fonte più citata, mese per mese</span>
+        <ol class="timeline">${s.history.map((h, i) => `<li class="${h.source && O.isDmo(h.source) ? "is-dmo" : ""}${i === s.history.length - 1 ? " is-now" : ""}"><span class="tl-m">${esc(h.month)}</span><span class="tl-s">${h.source ? `<i></i>${esc(h.source)}` : `<span class="tl-none">fuori dalle prime tre</span>`}</span></li>`).join("")}</ol>
+        <p class="tl-note">Pallino viola: sito di promozione turistica. Dai report di ogni rilevazione, finché la regione è fra le prime tre della categoria.</p></div>`;
+    }
     const p = s.place ?? (s.type === "primo" && s.kind !== "regione" ? s.now : null);
     if (!p?.engines) return "";
     return `<div class="story-chart"><span class="chart-h">Motore per motore, ${esc(month)}</span>${O.enginesHTML(p)}</div>`;
