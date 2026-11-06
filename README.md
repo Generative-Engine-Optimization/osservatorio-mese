@@ -1,8 +1,8 @@
 # Osservatorio, landing alternativa (prototipo)
 
-Prototipo cliccabile di una landing più editoriale per osservatorio.rankwit.ai, con la pagina «Cosa è cambiato questo mese». 26 ottobre 2026.
+Prototipo cliccabile di una landing più editoriale per osservatorio.rankwit.ai, con la pagina «Cosa è cambiato questo mese». Online su https://generative-engine-optimization.github.io/osservatorio-mese/.
 
-**Tutti i numeri sono dati di esempio.** Lo dicono la fascia in alto, il bollino fisso, la prima voce del ticker e il piè di pagina.
+**I numeri sono quelli pubblicati dall'osservatorio** (rilevazione del 1 novembre 2026, cioè ottobre su settembre), letti dalle pagine pubbliche di osservatorio.rankwit.ai. Niente viene ricalcolato: presenza, variazione, stabile o no, posizione e fonte più citata sono quelli del sito.
 
 ## Aprirlo
 
@@ -14,27 +14,41 @@ python3 -m http.server 8767 --directory osservatorio-landing-alternativa
 
 Poi http://localhost:8767. In Claude Code c'è la configurazione `osservatorio-alt` in `.claude/launch.json`.
 
+## Aggiornare i dati
+
+```bash
+python3 build/importa-dal-sito.py --refresh
+```
+
+Scarica dal sito pubblico la sitemap, le 7 pagine di categoria, le pagine delle regioni e i report di ogni rilevazione (in `build/.cache`, fuori da git) e riscrive `js/data.js`. Senza `--refresh` riusa le pagine già scaricate. Le foto disponibili e i loro crediti stanno in `build/foto.json`.
+
+Cosa prende dal sito:
+
+- pagine di categoria: le regioni in ordine, presenza, ± sul mese prima, se il ± è oltre l'oscillazione (colorato sul sito) o stabile, posizione, fonte più citata con la sua quota;
+- pagine delle regioni: le prime 15 località, gli stessi numeri, il tipo di luogo, quante domande ci sono dietro, motore per motore (prime dieci);
+- report di ogni rilevazione: quote per tipo di fonte con il ±, «su 100 fonti citate», le prime tre regioni per categoria con la fonte più citata.
+
+Il database dell'osservatorio sta su S3 e non serve: se un giorno lo si legge direttamente, cambia solo lo script.
+
 ## Pagine
 
-- `index.html`: la landing. Ticker in stile borsa, quadro del mese (salgono, stabili, scendono), tre schede con foto (salita, discesa, sorpresa), chi si muove, classifiche delle regioni per categoria con posizione e andamento, archivio dei numeri, regole di lettura, iscrizione (finta).
-- `mese.html?m=2026-10`: il numero del mese. Cinque notizie, tutti i movimenti con filtri, nota su cosa diciamo e cosa no, numero precedente e successivo. Funziona anche per `2026-08` e `2026-09`, dove al posto di «Da guardare» c'è «Com'è andata dopo».
+- `index.html`: la landing. Ticker, il mese in breve, tre notizie in evidenza, «Da sapere» (quattro numeri del mese con la loro base), chi si muove, classifiche delle regioni per categoria, archivio delle rilevazioni, regole di lettura, iscrizione (finta).
+- `mese.html?m=2026-10`: il numero del mese. Cinque notizie, tutti i movimenti con filtri e il numero di domande, nota su cosa diciamo e cosa no. Le rilevazioni di prima rimandano al loro report sul sito.
 
-## Come sono fatti i numeri
+## Le regole delle notizie
 
-- `build/gen-data.mjs` scrive `js/data.js`. È deterministico: stesso seme, stessi numeri. Le serie delle località delle notizie sono scritte a mano (`OVERRIDES`), le altre vengono da una passeggiata casuale. Il generatore cambia seme finché nessun'altra località ruba le notizie scelte.
-- `js/core.js` calcola tutto il resto dai dati: variazioni, stabili, posizioni, notizie del mese e testi. I testi sono modelli riempiti con i numeri, così non possono dire una cosa diversa dalla tabella.
-- Le regole sono quelle del metodo pubblico: variazione in punti, «stabile» se resta dentro l'oscillazione dello stesso mese (niente verde né rosso), freccia per le posizioni, pallino per chi entra.
+`js/core.js` sceglie le notizie dai dati, sempre con le stesse regole:
 
-Le cinque notizie, sempre le stesse: salita più grande oltre l'oscillazione, discesa più grande, località che entra con la presenza più alta, primo cambio al primo posto, primo cambio di fonte più citata.
+- **Cambia il primo**: la prima regione di una categoria cambia e la salita è oltre l'oscillazione (il primo di settembre viene dal report di settembre);
+- **La salita e la discesa più grandi** oltre l'oscillazione;
+- **La sorpresa**: la località che entra in classifica con la presenza più alta;
+- **Cambia la fonte**: fra le prime tre regioni di ogni categoria, la fonte più citata cambia rispetto al mese prima (prima i siti di promozione turistica).
 
-## Foto
+Per le notizie, il ticker e «chi si muove» contano solo le classifiche con almeno quattro domande (`MIN_Q`): con una o due, una sola risposta sposta molti punti. Quei movimenti restano nella tabella del mese, con il numero di domande accanto.
 
-Dodici foto da Wikimedia Commons, con autore e licenza nei crediti di ogni pagina. Le licenze CC BY-SA chiedono il credito e la stessa licenza per le versioni modificate: qui sono solo ritagliate.
+## Cosa manca
 
-## Prima di andare in produzione
-
-- Collegare i dati veri: per ogni località serve la presenza mese per mese, l'oscillazione misurata nello stesso mese e la base di risposte. Oggi l'oscillazione è stimata.
-- Verificare sui dati veri quante variazioni superano l'oscillazione. Se sono pochissime, il ticker va riempito con le regioni e con le stabili.
-- Decidere da dove vengono le foto per le località in evidenza (Commons, DMO, archivio nostro).
-- Scrivere la nota sui cambi di modello del mese, oggi è un segnaposto.
+- Lo storico mese per mese delle località: le pagine pubbliche danno solo il mese corrente e il ± sul precedente. Con il database si possono rimettere i grafici di andamento.
+- Le foto delle località in evidenza: oggi ci sono solo per Civita di Bagnoregio (borghi del Lazio); le altre schede usano il nome.
+- La nota sui cambi di modello dei motori nel mese.
 - Iscrizione al bollettino: il modulo non invia niente.

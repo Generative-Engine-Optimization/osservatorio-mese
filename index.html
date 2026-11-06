@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Osservatorio AI mese per mese · prototipo</title>
-  <meta name="description" content="Prototipo di landing alternativa per osservatorio.rankwit.ai: chi sale, chi scende e cosa è cambiato nel mese. Dati di esempio.">
+  <meta name="description" content="Prototipo di landing alternativa per osservatorio.rankwit.ai: chi sale, chi scende e cosa è cambiato nel mese, con i numeri pubblicati dall'osservatorio.">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="proto-bar"><strong>Prototipo</strong> · tutti i numeri, i movimenti e le notizie sono dati di esempio, non misure dell'osservatorio</div>
-  <div class="proto-badge" aria-hidden="true">Dati di esempio</div>
+  <div class="proto-bar"><strong>Prototipo</strong> · numeri della rilevazione del <span data-published></span>, presi dalle pagine pubbliche di <a href="https://osservatorio.rankwit.ai/it/">osservatorio.rankwit.ai</a></div>
+  <div class="proto-badge" aria-hidden="true">Prototipo</div>
 
   <header class="site-head space">
     <div class="wrap">
@@ -34,7 +34,7 @@
       <div>
         <p class="kicker" id="hero-kicker">Osservatorio mensile</p>
         <h1>L'Italia nelle risposte dell'AI, <em>mese per mese.</em></h1>
-        <p class="lede">Ogni mese facciamo le stesse domande di viaggio a cinque assistenti AI e contiamo quali località nominano. Qui vedi chi sale, chi scende e chi compare per la prima volta.</p>
+        <p class="lede">Ogni mese facciamo le stesse domande di viaggio a cinque assistenti AI e contiamo quali località nominano e quali fonti citano. Qui vedi chi sale, chi scende e chi compare per la prima volta.</p>
         <div class="cta-row">
           <a class="btn btn-primary" id="hero-cta" href="mese.html" data-month-link>Cosa è cambiato questo mese <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href="#classifiche">Le classifiche</a>
@@ -48,11 +48,24 @@
     <div class="wrap"><div class="feature-grid" id="features"></div></div>
   </section>
 
+  <section class="section" id="da-sapere">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">01 · Da sapere</span>
+          <h2 id="learn-title">Da sapere</h2>
+          <p>Quattro numeri del mese che vale la pena ricordare. Ognuno ha la sua base: il link porta alla pagina dell'osservatorio da cui viene.</p>
+        </div>
+      </div>
+      <div class="learn-grid" id="learn"></div>
+    </div>
+  </section>
+
   <section class="section" id="movimenti">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">01 · Movimenti</span>
+          <span class="section-num">02 · Movimenti</span>
           <h2 id="movers-title">Chi si muove</h2>
           <p id="movers-sub"></p>
         </div>
@@ -67,7 +80,7 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">02 · Classifiche</span>
+          <span class="section-num">03 · Classifiche</span>
           <h2>Le classifiche, con il movimento</h2>
           <p id="rank-sub"></p>
         </div>
@@ -81,9 +94,9 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">03 · Archivio</span>
+          <span class="section-num">04 · Archivio</span>
           <h2>Il mese, ogni mese</h2>
-          <p>Ogni rilevazione ha il suo numero: le stesse cinque notizie, scelte dai dati con le stesse regole. Nei numeri passati vedi anche com'è andata dopo.</p>
+          <p>Ogni rilevazione ha il suo numero, con le notizie scelte dai dati sempre con le stesse regole. Delle rilevazioni di prima trovi il report sul sito dell'osservatorio.</p>
         </div>
       </div>
       <div class="issues" id="issues"></div>
@@ -94,7 +107,7 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">04 · Metodo</span>
+          <span class="section-num">05 · Metodo</span>
           <h2>Come leggere i numeri</h2>
           <p>Quattro regole, sempre le stesse. Servono a non scambiare il caso per una notizia.</p>
         </div>
@@ -127,7 +140,7 @@
     <div class="wrap">
       <div>
         <span data-logo></span>
-        <p class="foot-note">Prototipo di landing alternativa per osservatorio.rankwit.ai, 26 ottobre 2026. Numeri, movimenti e notizie sono dati di esempio generati per il prototipo: non sono misure dell'osservatorio.</p>
+        <p class="foot-note">Prototipo di landing alternativa per osservatorio.rankwit.ai. I numeri sono quelli pubblicati dall'osservatorio per la rilevazione del <span data-published></span>, letti dalle sue pagine pubbliche il <span data-fetched></span>. Le notizie le scelgono i dati con regole fisse; i testi sono scritti a partire da quei numeri.</p>
       </div>
       <div id="crediti">
         <h3>Crediti delle foto</h3>

@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Il mese dell'AI · prototipo</title>
-  <meta name="description" content="Prototipo della pagina mensile dell'osservatorio: cosa è cambiato nelle risposte dell'AI. Dati di esempio.">
+  <meta name="description" content="Prototipo della pagina mensile dell'osservatorio: cosa è cambiato nelle risposte dell'AI, con i numeri pubblicati dall'osservatorio.">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="month-page">
-  <div class="proto-bar"><strong>Prototipo</strong> · tutti i numeri, i movimenti e le notizie sono dati di esempio, non misure dell'osservatorio</div>
-  <div class="proto-badge" aria-hidden="true">Dati di esempio</div>
+  <div class="proto-bar"><strong>Prototipo</strong> · numeri della rilevazione del <span data-published></span>, presi dalle pagine pubbliche di <a href="https://osservatorio.rankwit.ai/it/">osservatorio.rankwit.ai</a></div>
+  <div class="proto-badge" aria-hidden="true">Prototipo</div>
 
   <header class="site-head space">
     <div class="wrap">
@@ -31,7 +31,8 @@
 
   <header class="masthead">
     <div class="wrap">
-      <nav class="issue-switch" id="issue-switch" aria-label="Numeri del mese"></nav>
+      <nav class="issue-switch" id="issue-switch" aria-label="Rilevazioni"></nav>
+      <p class="older-note" id="older-note" hidden></p>
       <p class="kicker" id="mast-kicker"></p>
       <h1 class="mast-title" id="mast-title"></h1>
       <p class="mast-dek" id="mast-dek"></p>
@@ -70,12 +71,13 @@
       <div class="card note">
         <h3>Cosa diciamo e cosa no</h3>
         <p>Diciamo cosa è cambiato nelle risposte, non perché. Le cause possono essere tante: una pagina nuova, un articolo, un aggiornamento dell'assistente. Per questo non le attribuiamo.</p>
-        <p>Le cinque notizie le scelgono i dati, con le stesse regole ogni mese: la salita e la discesa più grandi oltre l'oscillazione, la località che entra con la presenza più alta, il primo cambio al vertice, il primo cambio di fonte.</p>
+        <p>Le cinque notizie le scelgono i dati, con le stesse regole ogni mese: il cambio al primo posto fra le regioni, la salita e la discesa più grandi oltre l'oscillazione, la località che entra con la presenza più alta, il cambio di fonte più citata fra le prime regioni.</p>
+        <p>Per le notizie guardiamo solo le classifiche con almeno quattro domande. Con una o due domande una sola risposta sposta molti punti: quei movimenti restano nella tabella, con il numero di domande accanto.</p>
       </div>
       <div class="card note note-context">
         <h3>Il contesto del mese</h3>
-        <p>Nel numero vero qui va la nota sui cambi di modello dichiarati dai motori nel mese. Un cambio di modello sposta tutte le località insieme, ed è una notizia a sé.</p>
-        <p class="mono" style="font-size:12px;color:var(--ink-muted)">Segnaposto del prototipo</p>
+        <p id="context-note"></p>
+        <p>Qui andrà anche la nota sui cambi di modello dichiarati dai motori nel mese: un cambio di modello sposta tutte le località insieme, ed è una notizia a sé.</p>
       </div>
     </div>
   </section>
@@ -104,7 +106,7 @@
     <div class="wrap">
       <div>
         <span data-logo></span>
-        <p class="foot-note">Prototipo della pagina mensile per osservatorio.rankwit.ai, 26 ottobre 2026. Numeri, movimenti e notizie sono dati di esempio generati per il prototipo: non sono misure dell'osservatorio.</p>
+        <p class="foot-note">Prototipo della pagina mensile per osservatorio.rankwit.ai. I numeri sono quelli pubblicati dall'osservatorio per la rilevazione del <span data-published></span>, letti dalle sue pagine pubbliche il <span data-fetched></span>. Le notizie le scelgono i dati con regole fisse; i testi sono scritti a partire da quei numeri.</p>
       </div>
       <div id="crediti">
         <h3>Crediti delle foto</h3>
@@ -115,7 +117,6 @@
 
   <script src="js/data.js"></script>
   <script src="js/core.js"></script>
-  <script src="js/charts.js"></script>
   <script src="js/mese.js"></script>
 </body>
 </html>
