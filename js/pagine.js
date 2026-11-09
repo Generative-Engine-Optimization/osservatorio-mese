@@ -31,7 +31,7 @@
     return `<nav class="crumbs" aria-label="Sei qui"><ol>${items.map(([label, href]) => `<li>${href ? `<a href="${esc(href)}">${esc(label)}</a>` : `<span aria-current="page">${esc(label)}</span>`}</li>`).join("")}</ol></nav>`;
   }
 
-  function headHTML({ crumbs, kicker, title, dek, facts = [], photo = null, tabs = "", site = null }) {
+  function headHTML({ crumbs, kicker, title, dek, facts = [], photo = null, tabs = "" }) {
     const ph = photo && O.photo(photo);
     return `
       <header class="page-head">
@@ -43,7 +43,6 @@
               <h1 class="page-title">${esc(title)}</h1>
               <p class="page-dek">${dek}</p>
               ${facts.length ? `<dl class="page-facts">${facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>` : ""}
-              ${site ? `<a class="site-link" href="${esc(site)}" target="_blank" rel="noopener">La stessa pagina su osservatorio.rankwit.ai <span class="arrow">↗</span></a>` : ""}
             </div>
             ${ph ? `<figure class="page-photo">${O.photoImgHTML(photo)}<figcaption>${photo !== title ? `${esc(photo)} · ` : ""}${O.creditHTML(photo)}</figcaption></figure>` : ""}
           </div>
@@ -311,7 +310,6 @@
       ],
       photo,
       tabs: catTabsHTML(cat, O.catHref),
-      site: siteUrl(cat),
     }) + tocHTML([["regioni", "Le regioni"], ["chi-racconta", "Chi racconta"], ["domande", "Le domande"]])
     + sectionHTML({
       id: "regioni", n: 1, label: "Le regioni",
@@ -338,7 +336,7 @@
       id: "domande", n: 3, label: "Le domande",
       title: "Le domande che facciamo ogni mese",
       sub: "Ognuna nasce da una ricerca vera su Google. Sotto ciascuna, le regioni che l'AI nomina di più e in quante risposte cita un sito di promozione turistica o il sito di un hotel.",
-      more: `<a class="link-more" href="${esc(siteUrl(cat))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero, sul sito <span class="arrow">↗</span></a>`,
+      more: `<a class="link-more" href="${esc(siteUrl(cat))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero <span class="arrow">↗</span></a>`,
       body: questionsHTML(c.questions, { linkName: (name) => (O.regionSlugs[name] ? O.regionHref(cat, O.regionSlugs[name]) : null) }),
     });
     finish(label);
@@ -380,7 +378,6 @@
       ].filter(Boolean),
       photo,
       tabs: catTabsHTML(cat, (c) => O.regionHref(c, slug), available, `${region}: le categorie`),
-      site: siteUrl(`${cat}/${slug}`),
     });
 
     const placesBody = places.length ? rankingHTML({
@@ -428,7 +425,7 @@
       id: "domande", n: 4, label: "Le domande",
       title: "Le domande che facciamo ogni mese",
       sub: "Ognuna nasce da una ricerca vera su Google. Sotto ciascuna, le località che l'AI nomina di più e in quante risposte cita un sito di promozione turistica o il sito di un hotel.",
-      more: `<a class="link-more" href="${esc(siteUrl(`${cat}/${slug}`))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero, sul sito <span class="arrow">↗</span></a>`,
+      more: `<a class="link-more" href="${esc(siteUrl(`${cat}/${slug}`))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero <span class="arrow">↗</span></a>`,
       body: questionsHTML(r.questions, { linkName: placeLink }),
     });
     finish(title);
@@ -465,7 +462,6 @@
         direct ? ["Sito diretto contro OTA", `${pct(direct.hotel)} <span class="was">contro ${pct(direct.ota)} alle OTA</span>`] : null,
       ].filter(Boolean),
       photo: O.photo(p.name) ? p.name : null,
-      site: siteUrl(`${cat}/${slug}/${ps}`),
     }) + tocHTML([["hotel", "Gli hotel"], ["chi-racconta", "Chi racconta"], ["domande", "Le domande"]])
     + sectionHTML({
       id: "hotel", n: 1, label: "Gli hotel",
@@ -490,7 +486,7 @@
       id: "domande", n: 3, label: "Le domande",
       title: "Le domande che facciamo ogni mese",
       sub: "Ognuna nasce da una ricerca vera su Google. Sotto ciascuna, gli hotel che l'AI nomina di più e in quante risposte cita un sito di promozione turistica o il sito di un hotel.",
-      more: `<a class="link-more" href="${esc(siteUrl(`${cat}/${slug}/${ps}`))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero, sul sito <span class="arrow">↗</span></a>`,
+      more: `<a class="link-more" href="${esc(siteUrl(`${cat}/${slug}/${ps}`))}#le-risposte" target="_blank" rel="noopener">Le risposte per intero <span class="arrow">↗</span></a>`,
       body: questionsHTML(p.questions),
     })
     + `<div class="wrap back-row"><a class="link-more" href="${esc(O.regionHref(cat, slug))}"><span class="arrow">←</span> ${esc(cat === "regione" ? `${p.region} in generale` : `${label} · ${p.region}`)}: tutte le località</a></div>`;
@@ -508,7 +504,6 @@
       kicker: kickerNow("Esplora"),
       title: "Tutte le categorie, le regioni e le località",
       dek: `${cats.length - 1} categorie più la regione in generale, ${e.regions.length} regioni, ${thousands(nPlaces)} località con gli hotel misurati: tutto quello che si può aprire nell'osservatorio, in una pagina.`,
-      site: `${O.SITE}/it/esplora`,
     }) + tocHTML([["categorie", "Le categorie"], ["regioni", "Le regioni"], ["localita", "Le località"]])
     + sectionHTML({
       id: "categorie", n: 1, label: "Le categorie",

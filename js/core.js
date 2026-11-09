@@ -451,9 +451,6 @@
   function initChrome() {
     document.querySelectorAll("[data-logo]").forEach((el) => { el.innerHTML = LOGO; });
     document.querySelectorAll("[data-published]").forEach((el) => { el.textContent = NOW.published; });
-    document.querySelectorAll("[data-fetched]").forEach((el) => {
-      el.textContent = new Date(`${D.source.fetched}T12:00:00`).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
-    });
     const tip = document.createElement("div");
     tip.className = "tip";
     tip.setAttribute("role", "status");

@@ -2,7 +2,7 @@
 
 Una landing più editoriale per osservatorio.rankwit.ai, con la pagina «Cosa è cambiato questo mese» e le pagine per categoria, regione e località. Online su https://generative-engine-optimization.github.io/osservatorio-mese/.
 
-In cima a ogni pagina una riga dice da dove vengono i numeri: «Numeri di osservatorio.rankwit.ai, rilevazione del …», con il link al sito. Le pagine hanno `noindex` finché stanno su github.io, così non fanno concorrenza al sito vero nei motori di ricerca.
+Sarà la nuova pagina dell'osservatorio: per questo le pagine non dicono più di essere una copia (niente riga sulla fonte, niente «sul sito» né «qui sono aperte a tutti»), e il piede è quello del sito («Un osservatorio di Rankwit…» con metodo, privacy, cookie, English). Le pagine hanno `noindex` finché stanno su github.io, così non fanno concorrenza al sito vero nei motori di ricerca.
 
 **I numeri sono quelli pubblicati dall'osservatorio** (rilevazione del 1 novembre 2026, cioè ottobre su settembre), letti dalle pagine pubbliche di osservatorio.rankwit.ai. Niente viene ricalcolato: presenza, variazione, stabile o no, posizione e fonte più citata sono quelli del sito.
 
@@ -53,7 +53,7 @@ Le quattro pagine profonde sono modelli: l'indirizzo dice quale pagina mostrare,
 
 Tutti i nomi di regioni e località nella landing, nel numero del mese, nel ticker, in «Chi si muove» e nelle notizie portano alle pagine interne. Una località senza pagina propria (hotel non misurati) apre la sua riga nella classifica della regione. Metodo, report, privacy, cookie, la versione inglese e le risposte per intero dell'AI restano link al sito originale.
 
-Sul sito queste pagine si aprono dopo l'email; qui sono aperte a tutti, e il piede della pagina lo dice.
+Sul sito queste pagine si aprono dopo l'email (link magico); su github.io per ora sono aperte. Il blocco va fatto quando la pagina passa su osservatorio.rankwit.ai: vedi «Cosa manca».
 
 ## Le regole delle notizie
 
@@ -80,4 +80,5 @@ Per le notizie, il ticker e «chi si muove» contano solo le classifiche con alm
 - Lo storico mese per mese delle località: le pagine pubbliche danno solo il mese corrente e il ± sul precedente. Con il database si possono rimettere i grafici di andamento.
 - Le foto: ci sono per le notizie, per le località di «chi si muove» e per le schede «Da sapere» (Wikimedia Commons, crediti in `build/foto.json`, `pos` sposta il ritaglio, miniature in `img/t/` fatte con `sips -Z 240`). Quando i dati di un mese scelgono località nuove, servono foto nuove; senza foto la scheda usa il nome.
 - La nota sui cambi di modello dei motori nel mese.
-- Un modulo che funzioni qui: quello del sito manda a `api-v2.rankwit.ai` con il controllo di Cloudflare Turnstile e scrive il cookie di accesso su `.rankwit.ai`, quindi da github.io non può funzionare. Il riquadro della landing e del numero del mese porta all'accesso del sito (https://osservatorio.rankwit.ai/it/accesso): link per email, report in PDF, domande in CSV. Un bollettino mensile via email non c'è.
+- L'accesso con l'email, come sul sito di oggi: il modulo manda a `POST api-v2.rankwit.ai/v2/osservatorio/access` (Turnstile, link valido 30 minuti), il link scrive il cookie `rw_osservatorio` su `.rankwit.ai` e il middleware di Cloudflare apre le pagine. L'API mette già ogni lettore in Attio (People e lista `osservatorio`, `api/src/modules/osservatorio/` nel monorepo). Brevo non c'è ancora. Da github.io non può funzionare (dominio del cookie e di Turnstile): per ora il riquadro porta a https://osservatorio.rankwit.ai/it/accesso.
+- Quando questa pagina sostituisce il sito, `build/importa-dal-sito.py` non ha più niente da leggere: i numeri vanno presi dal database dell'osservatorio.

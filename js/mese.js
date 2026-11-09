@@ -16,7 +16,7 @@
   const older = O.REP.find((r) => r.id === asked && r.id !== NOW.id);
   if (older) {
     document.getElementById("older-note").hidden = false;
-    document.getElementById("older-note").innerHTML = `Il numero di ${esc(older.month)} non c'è qui: <a href="${O.SITE}/it/report/${older.id}">apri il report di ${esc(older.month)} sul sito</a>. Qui sotto, ${esc(month)}.`;
+    document.getElementById("older-note").innerHTML = `Per ${esc(older.month)} c'è il report: <a href="${O.SITE}/it/report/${older.id}">apri il report di ${esc(older.month)}</a>. Qui sotto, ${esc(month)}.`;
   }
   const switchLinks = [...O.REP].reverse().map((r) => r.id === NOW.id
     ? `<a class="tab" href="${O.monthHref()}" aria-current="page">${esc(cap(r.month))} · questo numero</a>`
@@ -158,7 +158,7 @@
   renderTable();
 
   document.getElementById("issue-nav").innerHTML = `
-    <a class="card issue-link" href="${O.SITE}/it/report/${PREV.id}" target="_blank" rel="noopener"><span class="mono"><span class="arrow">←</span> ${esc(cap(prevMonth))} · rilevazione del ${esc(PREV.published)}</span><b>Il report di ${esc(prevMonth)} sul sito</b></a>
+    <a class="card issue-link" href="${O.SITE}/it/report/${PREV.id}" target="_blank" rel="noopener"><span class="mono"><span class="arrow">←</span> ${esc(cap(prevMonth))} · rilevazione del ${esc(PREV.published)}</span><b>Il report di ${esc(prevMonth)}</b></a>
     <div class="card issue-link right is-soon"><span class="mono">${esc(cap(NEXT.month))}</span><b>Esce il ${esc(NEXT.published)}</b></div>`;
 
   const same = NOW.domande === PREV.domande && NOW.localita === PREV.localita;
