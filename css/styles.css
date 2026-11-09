@@ -87,10 +87,9 @@ button, input { font: inherit; }
 .arrow { font-family: var(--font); }
 
 /* Prototype markers */
-.proto-bar { background: var(--amber); color: #2a1a00; font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.04em; text-align: center; padding: 7px var(--gutter); }
-.proto-bar strong { font-weight: 500; text-transform: uppercase; }
-.proto-bar a { color: inherit; }
-.proto-badge { position: fixed; left: 12px; bottom: 12px; z-index: 50; background: var(--amber); color: #2a1a00; font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 10px; border-radius: 999px; box-shadow: 0 4px 16px rgba(9, 4, 29, 0.25); pointer-events: none; }
+.source-bar { background: var(--space); color: var(--on-space-muted); border-bottom: 1px solid var(--on-space-line); font: 400 12px/1.4 var(--font-mono); letter-spacing: 0.02em; text-align: center; padding: 8px var(--gutter); }
+.source-bar a { color: var(--on-space-2); }
+.source-bar a:hover { color: var(--on-space); }
 
 /* Dark chrome: header, ticker, hero */
 .space { background: var(--space); color: var(--on-space); }
@@ -313,11 +312,7 @@ a.mrow:hover { background: var(--surface-sunken); }
 .subscribe > * { position: relative; }
 .subscribe h2 { font-family: var(--font-display); font-size: clamp(26px, 3vw, 38px); line-height: 1.12; margin: 0 0 12px; }
 .subscribe p { color: var(--on-space-2); margin: 0; }
-.subscribe form { display: flex; flex-direction: column; gap: 10px; }
-.field { display: flex; gap: 8px; }
-.field input { flex: 1; min-width: 0; border-radius: 10px; border: 1px solid var(--on-space-line); background: rgba(240,238,255,0.06); color: var(--on-space); padding: 12px 14px; }
-.field input::placeholder { color: var(--on-space-muted); }
-.form-note { font-size: 13px; color: var(--on-space-muted); min-height: 1.4em; margin: 0; }
+.subscribe-cta { display: flex; justify-content: flex-end; }
 
 /* Footer */
 .site-foot { padding: 48px 0 72px; font-size: 14px; color: var(--on-space-2); }
@@ -361,10 +356,9 @@ a.mrow:hover { background: var(--surface-sunken); }
   .issue { flex-direction: column; }
   .issue-img { width: 100%; aspect-ratio: 16 / 9; }
   .breadth-legend dd { font-size: 30px; }
-  .field { flex-direction: column; }
+  .subscribe-cta { justify-content: flex-start; }
   .site-foot .wrap { grid-template-columns: 1fr; }
   .credits { columns: 1; }
-  .proto-badge { left: auto; right: 10px; bottom: 10px; }
 }
 .menu-link { display: none; }
 

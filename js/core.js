@@ -471,11 +471,6 @@
     document.addEventListener("pointerout", (e) => {
       if (e.target.closest("[data-tip]")) tip.classList.remove("is-on");
     });
-    document.querySelectorAll("form[data-stub]").forEach((f) => f.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const note = f.querySelector(".form-note");
-      if (note) note.textContent = "Nel prototipo il modulo non invia niente. Qui andrà l'iscrizione al bollettino del mese.";
-    }));
   }
 
   const monthHref = (hash = "", cat = "") => `mese.html?m=${NOW.id}${cat ? `&cat=${cat}` : ""}${hash}`;

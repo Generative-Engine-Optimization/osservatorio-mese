@@ -9,14 +9,14 @@
   O.initChrome();
   O.renderTicker(document.getElementById("ticker"));
   O.wireMonthLinks();
-  document.title = `Cosa è cambiato ${at(month)} · Il mese dell'AI · prototipo`;
+  document.title = `Cosa è cambiato ${at(month)} · Il mese dell'AI`;
 
   // Only the latest survey has an issue here; the earlier ones open the observatory's report page.
   const asked = params.get("m");
   const older = O.REP.find((r) => r.id === asked && r.id !== NOW.id);
   if (older) {
     document.getElementById("older-note").hidden = false;
-    document.getElementById("older-note").innerHTML = `Il numero di ${esc(older.month)} non c'è in questo prototipo: <a href="${O.SITE}/it/report/${older.id}">apri il report di ${esc(older.month)} sul sito</a>. Qui sotto, ${esc(month)}.`;
+    document.getElementById("older-note").innerHTML = `Il numero di ${esc(older.month)} non c'è qui: <a href="${O.SITE}/it/report/${older.id}">apri il report di ${esc(older.month)} sul sito</a>. Qui sotto, ${esc(month)}.`;
   }
   const switchLinks = [...O.REP].reverse().map((r) => r.id === NOW.id
     ? `<a class="tab" href="${O.monthHref()}" aria-current="page">${esc(cap(r.month))} · questo numero</a>`

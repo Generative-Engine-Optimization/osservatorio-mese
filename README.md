@@ -1,6 +1,8 @@
-# Osservatorio, landing alternativa (prototipo)
+# Osservatorio, landing alternativa
 
-Prototipo cliccabile di una landing più editoriale per osservatorio.rankwit.ai, con la pagina «Cosa è cambiato questo mese». Online su https://generative-engine-optimization.github.io/osservatorio-mese/.
+Una landing più editoriale per osservatorio.rankwit.ai, con la pagina «Cosa è cambiato questo mese» e le pagine per categoria, regione e località. Online su https://generative-engine-optimization.github.io/osservatorio-mese/.
+
+In cima a ogni pagina una riga dice da dove vengono i numeri: «Numeri di osservatorio.rankwit.ai, rilevazione del …», con il link al sito. Le pagine hanno `noindex` finché stanno su github.io, così non fanno concorrenza al sito vero nei motori di ricerca.
 
 **I numeri sono quelli pubblicati dall'osservatorio** (rilevazione del 1 novembre 2026, cioè ottobre su settembre), letti dalle pagine pubbliche di osservatorio.rankwit.ai. Niente viene ricalcolato: presenza, variazione, stabile o no, posizione e fonte più citata sono quelli del sito.
 
@@ -40,7 +42,7 @@ Il database dell'osservatorio sta su S3 e non serve: se un giorno lo si legge di
 
 ## Pagine
 
-- `index.html`: la landing. Ticker, il mese in breve, tre notizie in evidenza, «Da sapere» (quattro numeri del mese con la loro base, titolo sul mese di uscita), chi si muove con il perché probabile, classifiche delle regioni per categoria, regole di lettura, iscrizione (finta).
+- `index.html`: la landing. Ticker, il mese in breve, tre notizie in evidenza, «Da sapere» (quattro numeri del mese con la loro base, titolo sul mese di uscita), chi si muove con il perché probabile, classifiche delle regioni per categoria, regole di lettura, il riquadro che porta all'accesso con l'email sul sito dell'osservatorio.
 - `mese.html?m=2026-10`: il numero del mese. Cinque notizie, tutti i movimenti con filtri e il numero di domande, nota su cosa diciamo e cosa no. Le rilevazioni di prima rimandano al loro report sul sito.
 - `categoria.html?c=mare`: una categoria (mare, montagna, laghi, borghi, citta, neve, regione). Le regioni con ±, posizione e fonte più citata; chi racconta («su 100 fonti» e le altre fonti voce per voce); i siti di promozione turistica motore per motore; le domande con le ricerche Google.
 - `regione.html?c=mare&r=puglia`: categoria × regione. Le prime 15 località con tipo, ± e posizione; motore per motore; chi racconta il territorio; quanto coprono i siti di promozione; sito diretto contro OTA; le domande. Le schede delle altre categorie della stessa regione.
@@ -51,7 +53,7 @@ Le quattro pagine profonde sono modelli: l'indirizzo dice quale pagina mostrare,
 
 Tutti i nomi di regioni e località nella landing, nel numero del mese, nel ticker, in «Chi si muove» e nelle notizie portano alle pagine interne. Una località senza pagina propria (hotel non misurati) apre la sua riga nella classifica della regione. Metodo, report, privacy, cookie, la versione inglese e le risposte per intero dell'AI restano link al sito originale.
 
-Sul sito queste pagine si aprono dopo l'email; nel prototipo sono aperte a tutti.
+Sul sito queste pagine si aprono dopo l'email; qui sono aperte a tutti, e il piede della pagina lo dice.
 
 ## Le regole delle notizie
 
@@ -68,7 +70,7 @@ Per le notizie, il ticker e «chi si muove» contano solo le classifiche con alm
 
 ## Cose da sapere sui dati del sito
 
-- In 50 righe delle classifiche per regione il sito scrive «Hotel non misurati», ma la pagina con gli hotel esiste e ha i numeri (per esempio Polignano a Mare, Ostuni, Matera). Il prototipo segue la pagina: la località ha il link ai suoi hotel.
+- In 50 righe delle classifiche per regione il sito scrive «Hotel non misurati», ma la pagina con gli hotel esiste e ha i numeri (per esempio Polignano a Mare, Ostuni, Matera). Qui si segue la pagina: la località ha il link ai suoi hotel.
 - Neve · Liguria non ha domande di confronto: la pagina lo dice e mostra solo le fonti. Il vecchio importatore lì leggeva la lista delle OTA come se fossero località (Tripadvisor compariva fra le località che scendono); ora non succede più, e nel mese le località che scendono sono una in meno.
 - Le pagine delle località esistono solo per mare, montagna, laghi, borghi, città e neve. Nella regione in generale le località aprono la loro riga in classifica.
 
@@ -78,4 +80,4 @@ Per le notizie, il ticker e «chi si muove» contano solo le classifiche con alm
 - Lo storico mese per mese delle località: le pagine pubbliche danno solo il mese corrente e il ± sul precedente. Con il database si possono rimettere i grafici di andamento.
 - Le foto: ci sono per le notizie, per le località di «chi si muove» e per le schede «Da sapere» (Wikimedia Commons, crediti in `build/foto.json`, `pos` sposta il ritaglio, miniature in `img/t/` fatte con `sips -Z 240`). Quando i dati di un mese scelgono località nuove, servono foto nuove; senza foto la scheda usa il nome.
 - La nota sui cambi di modello dei motori nel mese.
-- Iscrizione al bollettino: il modulo non invia niente.
+- Un modulo che funzioni qui: quello del sito manda a `api-v2.rankwit.ai` con il controllo di Cloudflare Turnstile e scrive il cookie di accesso su `.rankwit.ai`, quindi da github.io non può funzionare. Il riquadro della landing e del numero del mese porta all'accesso del sito (https://osservatorio.rankwit.ai/it/accesso): link per email, report in PDF, domande in CSV. Un bollettino mensile via email non c'è.

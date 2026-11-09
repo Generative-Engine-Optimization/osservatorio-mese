@@ -260,7 +260,7 @@
   }
 
   function notFound(what) {
-    document.title = "Pagina non trovata · Osservatorio AI · prototipo";
+    document.title = "Pagina non trovata · Osservatorio AI";
     main.innerHTML = headHTML({
       crumbs: [["Italia", "index.html"], ["Esplora", "esplora.html"], ["Pagina non trovata", null]],
       kicker: "Pagina non trovata",
@@ -270,7 +270,7 @@
   }
 
   function finish(title) {
-    document.title = `${title} · Osservatorio AI · prototipo`;
+    document.title = `${title} · Osservatorio AI`;
     wireQuestions(main);
     O.renderCredits(document.getElementById("credits"));
     if (location.hash) {
